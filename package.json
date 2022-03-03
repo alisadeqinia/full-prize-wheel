@@ -1,0 +1,20 @@
+{
+  "name": "prize-wheel",
+  "version": "1.0.0",
+  "description": "spin wheel and get prize!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "chance wheel",
+    "lottery wheel",
+    "prize"
+  ],
+  "author": "Ali Sadeqinia",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.3",
+    "nedb": "^1.8.0"
+  }
+}
