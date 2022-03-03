@@ -14,6 +14,7 @@
   "author": "Ali Sadeqinia",
   "license": "MIT",
   "dependencies": {
+    "dotenv": "^16.0.0",
     "express": "^4.17.3",
     "nedb": "^1.8.0"
   }
