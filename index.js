@@ -5,17 +5,12 @@ require("dotenv").config();
 // Initialize app and DB
 const app = express();
 const database = new Nedb('database.db');
-// Run API on server
-const port = process.env.PORT || 3040;
-app.listen(port, ()=> {
-    console.log('Im listening');
-    console.log('Go to: localhost:3040 and spin the wheel!');
-});
 // Start DB
 database.loadDatabase();
 // Set app usage
-app.use(express.static('public'));
-app.use(express.json());
+app.use(express.static('public')); // client side files
+app.use(express.json()); // get and post res, req can be json
+app.use(express.urlencoded()); // to parse body of request.
 
 // Set get endpoint
 app.get('/cookie', (request, response) => {
@@ -32,6 +27,7 @@ app.get('/slice-api', (request, response) => {
   database.find({}, (err, docs) => {
       if (err) {
           response.end();
+          console.error(err);
           return
       }
       response.json({
@@ -43,16 +39,26 @@ app.get('/slice-api', (request, response) => {
 
 // Set post endpoint
 app.post('/slice-api', (request, response) => {
-  database.remove({}, { multi: true }, function (err, numRemoved) {
+  database.remove({}, {multi: true}, function (err, numRemoved) {
   });
-  console.log('I have a request!');
-  const data = request.body;
-  database.insert(data);
-  response.json({
-      status: "success",
-      latitude: data.latitude,
-      longitude: data.longitude,
-      timestamp: data.timestamp,
-      image: data.image,
-  })
+  console.log('Client has a request!');
+  database.insert(request.body, function (err, docs) {
+    if (err) {
+        response.end();
+        console.error(err);
+        return
+    }
+  });
+  response.send(
+      `تغییرات شما ثبت شد
+      <br>
+      <a href="/">برو به گردونه شانس</a>`
+    )
 })
+
+// Run API on server
+const port = process.env.PORT || 3040;
+app.listen(port, ()=> {
+    console.log('Im listening');
+    console.log('Go to: localhost:3040 and spin the wheel!');
+});

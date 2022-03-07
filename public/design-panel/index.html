@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="static/css/style.css">
+  <script src="static/js/script.js"></script>
+  <title>Design panel</title>
+</head>
+<body dir="rtl" lang="fa">
+  <header>
+    <a href="../">گردونه جوایز</a>
+  </header>
+  <section class="main-box">
+    <ul>
+      <li>باید حداقل 4 و حداکثر 8 عنوان هدیه داشته باشید.</li>
+      <li>مجموع شانس ها باید 1 باشد.</li>
+      <li>برای افزودن عنوان جدید روی افزودن ردیف کلیک کنید.</li>
+      <li>فراموش نکنید تغییرات را ثبت کنید.</li>
+    </ul>
+    <hr>
+    <form id="form-box" action='/slice-api' onchange="propSum()" onsubmit="return validForm()" method="post">
+      <div class="form-head">
+        <button class="btn" onclick="addRow()" type="button">افزودن ردیف</button>
+        <input class="btn" type="submit" value="ثبت تغییرات">
+      </div>
+      <p>مجموع شانس ها: <span id="chance-summation">0.0</span></p>
+      <div class="input-box">
+        <input type="text" name="title" maxlength="20" placeholder="عنوان هدیه" required>
+        <input type="number" name="prop" min="0" max="1" step=".1" placeholder="شانس" required>
+      </div>
+      <div class="input-box">
+        <input type="text" name="title" maxlength="20" placeholder="عنوان هدیه" required>
+        <input type="number" name="prop" min="0" max="1" step=".1" placeholder="شانس" required>
+      </div>
+      <div class="input-box">
+        <input type="text" name="title" maxlength="20" placeholder="عنوان هدیه" required>
+        <input type="number" name="prop" min="0" max="1" step=".1" placeholder="شانس" required>
+      </div>
+      <div class="input-box"> 
+        <input type="text" name="title" maxlength="20" placeholder="عنوان هدیه" required>
+        <input type="number" name="prop" min="0" max="1" step=".1" placeholder="شانس" required>
+      </div>
+    </form>
+  </section>
+</body>
+</html>

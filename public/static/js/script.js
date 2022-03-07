@@ -1,10 +1,30 @@
-const SLICES = ["پول نقد", "بلیط کنسرت", "پوچ", "یک کتاب خوب", "کد تخفیف 10 درصد", "عضویت دائم"]; // number of slices: 8
-const PROB = {0:.1, 1:.09, 2:.35, 3:.12, 4:.12, 5:.12, 6:.1,}
+// const SLICES = ["پول نقد", "بلیط کنسرت", "پوچ", "یک کتاب خوب", "کد تخفیف 10 درصد", "عضویت دائم"];
+// const PROP = {0:.1, 1:.09, 2:.35, 3:.12, 4:.12, 5:.12, 6:.1,}
+// let sliceArc = 360/SLICES.length;
 const COLORS = ["#19c", "#16a085", '#2980b9', '#34495e', '#f39c12', '#d35400', '#34495e', 'rgb(14, 156, 14)'];
-let sliceArc = 360/SLICES.length;
 const spinner = document.getElementById('spinner');
 
-function showWheel() {
+async function getSlices() {
+  const res = await fetch("/slice-api");
+  const json = await res.json();
+  const SLICES = json.docs[0].title;
+  const PROP = {};
+  for (let i=0; i < json.docs[0].prop.length; ++i) {
+    PROP[i] = parseFloat(json.docs[0].prop[i]);
+  }
+  return [SLICES, PROP];
+}
+
+async function getName() {
+  const response = await fetch('/cookie');
+  const jsonObj = await response.json();
+  return {name: jsonObj.name, time: jsonObj.time};
+}
+
+async function showWheel() {
+  const sliceData = await getSlices();
+  const SLICES = sliceData[0];
+  const sliceArc = 360/SLICES.length;
   let fraction = Math.tan((45-sliceArc/2)* (Math.PI/180));
   let edgeCoord = Math.ceil(100 * (1-fraction));
   for (let i=0; i<SLICES.length; ++i) {
@@ -17,15 +37,23 @@ function showWheel() {
     spinner.appendChild(sliceBar);
   }
 }
+ 
+async function startSpin() {
+  const sliceData = await getSlices();
+  const SLICES = sliceData[0];
+  const PROP = sliceData[1];
+  const sliceArc = 360/SLICES.length;
+  const cookieData = await getName();
+  const cookieName = cookieData.name;
+  const expTime = cookieData.time;
 
-  
-function startSpin() {
-  function getPrize() {
+  async function getPrize() {
     spinner.style.transition = "all 6s cubic-bezier(0, 0.99, 0.44, 0.99)";
     // Avoid spinning before the end of the current round
     document.getElementById('spin-btn').style.pointerEvents = 'none';
     // calculate spin degree
-    let currentSlice = weightedRandom(PROB);
+    let currentSlice = await weightedRandom(PROP);
+    console.log(currentSlice);
     let stepDeg = currentSlice * sliceArc;
     let degree = stepDeg + 3600;
     spinner.style.transform = `rotate(${-degree}deg)`;
@@ -45,7 +73,7 @@ function startSpin() {
     spinner.style.transform = "rotate(0deg)";
   }
   
-  function weightedRandom(prob) {
+  async function weightedRandom(prob) {
     let i, sum=0, r=Math.random();
     for (i in prob) {
       sum += prob[i];
@@ -55,7 +83,7 @@ function startSpin() {
   
   function setCookie(cname, cvalue, extime) {
     const d = new Date();
-    d.setTime(d.getTime() + (extime * 60 * 1000));
+    d.setTime(d.getTime() + (extime *60 * 60 * 1000));
     let expires = "expires="+d.toUTCString();
     document.cookie = `${cname}=${cvalue};${expires};path=/`;
   }
@@ -74,15 +102,10 @@ function startSpin() {
     }
     return "";
   }
-  async function getName() {
-    const response = await fetch('/cookie');
-    const jsonObj = await response.json();
-    return {name: jsonObj.name, time: jsonObj.time};
-  }
 
 
   if (navigator.cookieEnabled) {
-    let user = getCookie("wheelUser");
+    let user = getCookie(cookieName);
     if (user != "") {
       swal({
         title: `${user} عزیز`,
@@ -101,9 +124,7 @@ function startSpin() {
         swal(`خوش اومدی ${value}`)
         .then (() => {
           if (value != "" && value != null) {
-            getName().then(res => {
-              setCookie(res.name, value, parseFloat(res.time));
-            });
+            setCookie(cookieName, value, parseFloat(expTime));
           }
           getPrize();
         })

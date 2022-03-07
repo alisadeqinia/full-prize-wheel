@@ -14,8 +14,11 @@
   "author": "Ali Sadeqinia",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.19.2",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
-    "nedb": "^1.8.0"
+    "multer": "^1.4.4",
+    "nedb": "^1.8.0",
+    "nodemon": "^2.0.15"
   }
 }
